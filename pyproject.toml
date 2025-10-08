@@ -1,0 +1,28 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "sbelong"
+version = "2025.10.08"
+readme = "README.md"
+description = "A CLI wrapper around sinfo that displays node/partition set membership in tabular form."
+license = "Apache-2.0"
+authors = [
+	{ name = "John Pellman", email = "john+github@libjpel.so"}, 
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+  "sh",
+  "prettytable"
+]
+
+requires-python = ">=3.10,<4.0"
+
+[project.urls]
+Homepage = "https://github.com/nysbc/sbelong/"
+Issues = "https://github.com/nysbc/sbelong/issues"
