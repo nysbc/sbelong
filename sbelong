@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+import os
+import json
+import sys
+try:
+    from sh import sinfo
+except ImportError:
+    print("Prerequisite application 'sinfo' is not available on this host.")
+    print("Ensure that sinfo is isntalled and added to the shell's PATH variable.")
+    print()
+    sys.exit(1)
+from prettytable import PrettyTable
+
+sbelong_partition_deny=[]
+if "SBELONG_PARTITION_DENY" in os.environ:
+    try:
+        with open(os.environ["SBELONG_PARTITION_DENY"],"r") as f:
+            sbelong_partition_deny=json.load(f)
+        if type(sbelong_partition_deny) is not list:
+            raise RuntimeError("sbelong partition deny list is not list.")
+    except:
+        print("Failure to open %s.  sbelong partition block list not loaded" % os.environ["SBELONG_PARTITION_DENY"])
+        print()
+
+sbelong_node_deny=[]
+if "SBELONG_NODE_DENY" in os.environ:
+    try:
+        with open(os.environ["SBELONG_NODE_DENY"],"r") as f:
+            sbelong_node_deny=json.load(f)
+        if type(sbelong_node_deny) is not list:
+            raise RuntimeError("sbelong node deny list is not list.")
+    except:
+        print("Failure to open %s.  sbelong node block list not loaded" % os.environ["SBELONG_NODE_DENY"])
+        print()
+
+nodes=[node for node in sinfo("-h", o="%n",S="+n").split("\n") if node]
+nodes=[node for node in nodes if node not in sbelong_node_deny]
+partitions=[partition for partition in sinfo("-h",o="%R",S="+R").split("\n") if partition]
+
+memberships={}
+
+for node in nodes:
+    memberships[node]=[]
+    lines=[line for line in sinfo("-h",o="%R,%n",S="+n",n=node).split("\n") if line]
+    for line in lines:
+        line=line.split(",")
+        if len(line) == 2:
+            if line[1].strip() == node:
+                memberships[node].append(line[0].strip())
+
+partitions=[partition for partition in partitions if not partition.strip() in sbelong_partition_deny]
+table = PrettyTable()
+table.field_names = ["Node"] + partitions
+for node in nodes:
+    table.add_row([node] + [partition in memberships[node] for partition in partitions])
+
+print(table)
