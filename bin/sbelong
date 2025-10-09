@@ -50,7 +50,18 @@ for node in nodes:
 partitions=[partition for partition in partitions if not partition.strip() in sbelong_partition_deny]
 table = PrettyTable()
 table.field_names = ["Node"] + partitions
+
+partition_node_count={partition : 0 for partition in partitions}
 for node in nodes:
-    table.add_row([node] + [partition in memberships[node] for partition in partitions])
+    node_row=[node]
+    for partition in partitions:
+        partition_member=partition in memberships[node]
+        node_row.append(partition_member)
+        if partition_member:
+            partition_node_count[partition]+=1
+    table.add_row(node_row)
+
+table.add_divider()
+table.add_row(["Total Count"]+[partition_node_count[partition] for partition in partitions])
 
 print(table)
