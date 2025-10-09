@@ -6,7 +6,7 @@ try:
     from sh import sinfo
 except ImportError:
     print("Prerequisite application 'sinfo' is not available on this host.")
-    print("Ensure that sinfo is isntalled and added to the shell's PATH variable.")
+    print("Ensure that sinfo is installed and added to the shell's PATH variable.")
     print()
     sys.exit(1)
 from prettytable import PrettyTable
