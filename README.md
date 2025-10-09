@@ -2,11 +2,12 @@
 
 ----------------------------------
 
-*sbelong* is a simple wrapper around *sinfo* that allows one to visualize which nodes belong to which partitions in a table.
+`sbelong` is a simple wrapper around `sinfo` that allows one to visualize which nodes belong to which partitions in a table.
 It exists because our end-users wanted a simple way to see which nodes were in which partition on our Slurm cluster.
 
-To remove specific nodes or partitions from the output, add the undesired node/partition names to a list and then serialize that list to a JSON
-file.  
+## Configuration
 
-Set the shell environment variable SBELONG_PARTITION_DENY to the path for the JSON file containing the list of partitions to remove from the output.
-Set the shell environment variable SBELONG_NODE_DENY to the path for the JSON file containing the list of nodes to remove from the output.
+`sbelong` uses a simple JSON file for its configuration.  This JSON file allows you to define block lists to remove certain nodes/partitions
+from the output.  It is formatted as a dictionary with two keys: `sbelong_node_deny` and `sbelong_partition_deny` (see the `examples` subdirectory).
+
+To define the configuration file, set the shell environment variable SBELONG_CONF to the path to the JSON file.

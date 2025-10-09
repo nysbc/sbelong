@@ -11,27 +11,26 @@ except ImportError:
     sys.exit(1)
 from prettytable import PrettyTable
 
-sbelong_partition_deny=[]
-if "SBELONG_PARTITION_DENY" in os.environ:
+if "SBELONG_CONF" in os.environ:
     try:
-        with open(os.environ["SBELONG_PARTITION_DENY"],"r") as f:
-            sbelong_partition_deny=json.load(f)
-        if type(sbelong_partition_deny) is not list:
-            raise RuntimeError("sbelong partition deny list is not list.")
+        with open(os.environ["SBELONG_CONF"],"r") as f:
+            sbelong_conf=json.load(f)
+        if type(sbelong_conf) is not dict:
+            raise RuntimeError("sbelong config is not formatted correctly.")
     except:
-        print("Failure to open %s.  sbelong partition block list not loaded" % os.environ["SBELONG_PARTITION_DENY"])
+        print("Failure to open %s.  sbelong config not loaded" % os.environ["SBELONG_CONF"])
         print()
+        sbelong_conf={}
+
+sbelong_partition_deny=[]
+if "sbelong_partition_deny" in sbelong_conf.keys():
+    if type(sbelong_conf["sbelong_partition_deny"]) == list: 
+        sbelong_partition_deny=sbelong_conf["sbelong_partition_deny"]
 
 sbelong_node_deny=[]
-if "SBELONG_NODE_DENY" in os.environ:
-    try:
-        with open(os.environ["SBELONG_NODE_DENY"],"r") as f:
-            sbelong_node_deny=json.load(f)
-        if type(sbelong_node_deny) is not list:
-            raise RuntimeError("sbelong node deny list is not list.")
-    except:
-        print("Failure to open %s.  sbelong node block list not loaded" % os.environ["SBELONG_NODE_DENY"])
-        print()
+if "sbelong_node_deny" in sbelong_conf.keys():
+    if type(sbelong_conf["sbelong_node_deny"]) == list: 
+        sbelong_node_deny=sbelong_conf["sbelong_node_deny"]
 
 nodes=[node for node in sinfo("-h", o="%n",S="+n").split("\n") if node]
 nodes=[node for node in nodes if node not in sbelong_node_deny]
