@@ -21,6 +21,9 @@ if "SBELONG_CONF" in os.environ:
         print("Failure to open %s.  sbelong config not loaded" % os.environ["SBELONG_CONF"])
         print()
         sbelong_conf={}
+else:
+    sbelong_conf={}
+
 
 sbelong_partition_deny=[]
 if "sbelong_partition_deny" in sbelong_conf.keys():
