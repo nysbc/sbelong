@@ -1,11 +1,13 @@
 BASEDIR := $(shell git rev-parse --show-toplevel)
 BUILDDIR := $(BASEDIR)/builddir
+INSTALLDIR := /common/sw/containers/opt/sbelong/bin
 VPATH = src $(BUILDDIR)
 
 PYTHON_APPIMAGE := /opt/appimage/bin/python3.10.19-cp310-cp310-manylinux2014_x86_64.AppImage
 APPIMAGETOOL := /opt/appimage/bin/appimagetool-x86_64.AppImage
 CHMOD := /usr/bin/chmod
 RM := /usr/bin/rm
+CP := /usr/bin/cp
 
 $(BUILDDIR):
 	mkdir -p $@
@@ -28,6 +30,14 @@ sbelong: AppRun sbelong.py poetry.lock pyproject.toml sbelong.AppDir
 	$(APPIMAGETOOL) sbelong.AppDir sbelong ; \
 	$(CHMOD) +x sbelong
 
+.PHONY: build
+build: sbelong
+
+.PHONY: install
+install: build
+	cp $(BUILDDIR)/sbelong $(INSTALLDIR)
+
+.PHONY: clean
 clean:
 	if [ -d $(BUILDDIR) ] ; then \
 		$(RM) -rf $(BUILDDIR);\
